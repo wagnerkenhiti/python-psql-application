@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Alunos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="toggle-btn" id="toggleBtn">
+                <i class="fas fa-bars fa-lg"></i>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active" data-page="cadastro">
+                        <i class="fas fa-user-plus icon"></i>
+                        <span class="text">Cadastrar aluno</span>
+                    </li>
+                    <li data-page="consulta">
+                        <i class="fas fa-search icon"></i>
+                        <span class="text">Consultar aluno</span>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section class="page" id="cadastro">
+                <h2>Cadastrar aluno</h2>
+                <div id="status-message" class="status-message"></div>
+                <form id="form-cadastro">
+                    <label for="nome">Nome completo do aluno:</label>
+                    <input type="text" id="nome" name="nome" required>
+
+                    <label for="rga-cadastro">RGA do aluno:</label>
+                    <input type="text" id="rga-cadastro" name="rga" required>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-cadastrar">Cadastrar</button>
+                        <button type="reset" class="btn-limpar">Limpar</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="page hidden" id="consulta">
+                <h2>Consultar aluno</h2>
+                <form id="form-consulta">
+                    <label for="rga-consulta">RGA do aluno:</label>
+                    <input type="text" id="rga-consulta" name="rga">
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-pesquisar">Pesquisar</button>
+                        <button type="reset" class="btn-limpar">Limpar</button>
+                        <button type="button" class="btn-mostrar-tudo">Mostrar tudo</button>
+                    </div>
+                </form>
+                <div id="alunos-list" class="alunos-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleBtn');
+            const sidebar = document.getElementById('sidebar');
+            const navItems = document.querySelectorAll('.sidebar li');
+            const pages = document.querySelectorAll('.page');
+            const formCadastro = document.getElementById('form-cadastro');
+            const formConsulta = document.getElementById('form-consulta');
+            const statusMessage = document.getElementById('status-message');
+            const alunosList = document.getElementById('alunos-list');
+
+            // Função para exibir mensagem de status
+            function showStatus(message, isError = false) {
+                statusMessage.textContent = message;
+                statusMessage.className = isError ? 'status-message error' : 'status-message success';
+                setTimeout(() => {
+                    statusMessage.textContent = '';
+                    statusMessage.className = 'status-message';
+                }, 5000);
+            }
+
+            // Função para exibir a lista de alunos
+            function displayAlunos(alunos) {
+                alunosList.innerHTML = '';
+                if (alunos.length > 0) {
+                    const ul = document.createElement('ul');
+                    alunos.forEach(aluno => {
+                        const li = document.createElement('li');
+                        li.textContent = `Nome: ${aluno.nome}, RGA: ${aluno.rga}`;
+                        ul.appendChild(li);
+                    });
+                    alunosList.appendChild(ul);
+                } else {
+                    alunosList.innerHTML = '<p>Nenhum aluno encontrado.</p>';
+                }
+            }
+
+            // Toggle sidebar
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                const icon = toggleBtn.querySelector('i');
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-arrow-left');
+                } else {
+                    icon.classList.remove('fa-arrow-left');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            // Handle page navigation
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    const pageId = item.getAttribute('data-page');
+                    pages.forEach(page => {
+                        page.classList.add('hidden');
+                        if (page.id === pageId) {
+                            page.classList.remove('hidden');
+                        }
+                    });
+
+                    // Limpa a área de resultados ao trocar de página
+                    if (statusMessage) statusMessage.textContent = '';
+                    if (alunosList) alunosList.innerHTML = '';
+
+                    const icon = toggleBtn.querySelector('i');
+                    if (!sidebar.classList.contains('collapsed')) {
+                        toggleBtn.click();
+                    }
+                });
+            });
+
+            // Handle form submissions (for Python integration)
+            formCadastro.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(formCadastro);
+                const data = Object.fromEntries(formData.entries());
+
+                fetch('/cadastrar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.mensagem); });
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    showStatus(result.mensagem);
+                    formCadastro.reset();
+                })
+                .catch(error => {
+                    showStatus(error.message, true);
+                    console.error('Erro:', error);
+                });
+            });
+
+            formConsulta.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(formConsulta);
+                const data = Object.fromEntries(formData.entries());
+                
+                fetch('/consultar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw new Error(err.mensagem); });
+                    }
+                    return response.json();
+                })
+                .then(aluno => {
+                    displayAlunos([aluno]);
+                })
+                .catch(error => {
+                    alunosList.innerHTML = `<p class="error">${error.message}</p>`;
+                    console.error('Erro:', error);
+                });
+            });
+
+            document.querySelector('.btn-mostrar-tudo').addEventListener('click', function() {
+                fetch('/mostrar_tudo')
+                .then(response => response.json())
+                .then(alunos => {
+                    displayAlunos(alunos);
+                })
+                .catch(error => {
+                    alunosList.innerHTML = `<p class="error">Erro ao carregar a lista de alunos.</p>`;
+                    console.error('Erro:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

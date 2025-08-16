@@ -1,0 +1,200 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #e3f2fd; /* Azul claro pastel */
+    display: flex;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2196f3; /* Azul mais escuro para a sidebar */
+    color: white;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar .toggle-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed .toggle-btn i {
+    transform: rotate(180deg);
+}
+
+.sidebar nav {
+    margin-top: 50px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar li:hover {
+    background-color: #1976d2;
+}
+
+.sidebar li.active {
+    background-color: #1565c0;
+}
+
+.sidebar .icon {
+    font-size: 20px;
+    min-width: 20px;
+}
+
+.sidebar.collapsed .text {
+    display: none;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.page {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page.hidden {
+    display: none;
+}
+
+h2 {
+    color: #333;
+    border-bottom: 2px solid #2196f3;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.form-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-cadastrar, .btn-pesquisar, .btn-mostrar-tudo {
+    background-color: #4CAF50; /* Verde */
+}
+
+.btn-limpar {
+    background-color: #f44336; /* Vermelho */
+}
+
+.btn-cadastrar:hover,
+.btn-pesquisar:hover,
+.btn-mostrar-tudo:hover {
+    opacity: 0.9;
+}
+
+.btn-limpar:hover {
+    opacity: 0.9;
+}
+
+/* Adicione estas classes ao final do seu arquivo styles.css */
+
+.status-message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+    display: none; /* Inicia escondido */
+}
+
+.status-message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+.status-message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}
+
+.alunos-list {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.alunos-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.alunos-list li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.alunos-list li:last-child {
+    border-bottom: none;
+}
+
