@@ -7,7 +7,7 @@ class connection_db:
             dbname=os.getenv("POSTGRES_DB"),
             user=os.getenv("POSTGRES_USER"),
             password=os.getenv("POSTGRES_PASSWORD"),
-            host = "localhost"
+            host = os.getenv("POSTGRES_HOST")
         )
     
     def __enter__(self) :
