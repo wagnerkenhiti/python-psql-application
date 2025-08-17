@@ -4,9 +4,9 @@ import os,psycopg2
 class connection_db:
     def __init__(self):
         self.connect_db = psycopg2.connect(
-            dbname="postgres",
-            user="postgres",
-            password="mysecretpassword",
+            dbname=os.getenv("POSTGRES_DB"),
+            user=os.getenv("POSTGRES_USER"),
+            password=os.getenv("POSTGRES_PASSWORD"),
             host = "localhost"
         )
     
